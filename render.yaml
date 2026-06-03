@@ -1,0 +1,23 @@
+# Blueprint: https://dashboard.render.com/blueprints
+# Web Service (free). Проверку цен по расписанию — cron-job.org (см. README).
+services:
+  - type: web
+    name: flight-alerts-api
+    runtime: python
+    plan: free
+    region: frankfurt
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_PATH
+        value: data/flight_alerts.db
+      - key: CHECK_INTERVAL_HOURS
+        value: "4"
+      - key: TRAVELPAYOUTS_TOKEN
+        sync: false
+      - key: TRAVELPAYOUTS_MARKER
+        sync: false
+      - key: CRON_SECRET
+        generateValue: true

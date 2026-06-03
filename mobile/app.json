@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Flight Alerts",
+    "slug": "flight-alerts",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "flightalerts",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.you.flightalerts"
+    },
+    "android": {
+      "package": "com.you.flightalerts",
+      "adaptiveIcon": {
+        "backgroundColor": "#0f172a"
+      }
+    },
+    "plugins": [
+      "expo-notifications",
+      "expo-asset",
+      "expo-font"
+    ],
+    "extra": {
+      "apiUrl": "http://192.168.1.73:8000",
+      "eas": {
+        "projectId": "ba4d0f62-f9f3-4725-a3ac-a851dd3f92b1"
+      }
+    },
+    "owner": "sdeepmtg"
+  }
+}
