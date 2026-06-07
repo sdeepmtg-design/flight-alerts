@@ -4,8 +4,14 @@
     "slug": "flight-alerts",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "scheme": "flightalerts",
     "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0f172a"
+    },
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
@@ -14,6 +20,7 @@
     "android": {
       "package": "com.you.flightalerts",
       "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0f172a"
       }
     },
@@ -23,7 +30,7 @@
       "expo-font"
     ],
     "extra": {
-      "apiUrl": "http://192.168.1.73:8000",
+      "apiUrl": "https://flight-alerts-api.onrender.com",
       "eas": {
         "projectId": "ba4d0f62-f9f3-4725-a3ac-a851dd3f92b1"
       }

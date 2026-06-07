@@ -1,5 +1,12 @@
 # Blueprint: https://dashboard.render.com/blueprints
-# Web Service (free). Проверку цен по расписанию — cron-job.org (см. README).
+# Web Service (free) + Postgres (free). Cron — cron-job.org (см. README).
+databases:
+  - name: flight-alerts-db
+    databaseName: flight_alerts
+    user: flight_alerts
+    plan: free
+    region: frankfurt
+
 services:
   - type: web
     name: flight-alerts-api
@@ -11,8 +18,10 @@ services:
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
     envVars:
-      - key: DATABASE_PATH
-        value: data/flight_alerts.db
+      - key: DATABASE_URL
+        fromDatabase:
+          name: flight-alerts-db
+          property: connectionString
       - key: CHECK_INTERVAL_HOURS
         value: "4"
       - key: TRAVELPAYOUTS_TOKEN

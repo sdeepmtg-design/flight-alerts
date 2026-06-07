@@ -6,6 +6,7 @@ class Settings(BaseSettings):
 
     travelpayouts_token: str = ""
     travelpayouts_marker: str = ""
+    database_url: str = ""
     database_path: str = "./flight_alerts.db"
     check_interval_hours: int = 4
     cron_secret: str = "dev"

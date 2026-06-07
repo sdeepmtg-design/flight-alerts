@@ -8,7 +8,9 @@
     "ios": "expo start --ios",
     "eas": "eas",
     "eas:login": "eas login",
-    "eas:init": "eas init"
+    "eas:init": "eas init",
+    "build:android": "eas build --platform android --profile preview",
+    "build:ios": "eas build --platform ios --profile preview"
   },
   "dependencies": {
     "babel-preset-expo": "~54.0.10",

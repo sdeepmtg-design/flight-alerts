@@ -69,69 +69,79 @@ npx expo start
 
 ## Деплой на Render
 
-В корне проекта лежит `render.yaml` — Blueprint для **Web Service** (бесплатный план).
+В корне проекта лежит `render.yaml` — Blueprint: **Web Service** + **Postgres** (free).
+
+Маршруты хранятся в **PostgreSQL**, а не в SQLite — они **не пропадают**, когда сервер «засыпает».
 
 ### 1. Репозиторий на GitHub
 
 ```powershell
 cd flight-alerts
-git init
 git add .
-git commit -m "Flight alerts MVP"
-# Создайте пустой репозиторий на GitHub и:
-git remote add origin https://github.com/ВАШ_ЛОГИН/flight-alerts.git
-git push -u origin main
+git commit -m "Postgres + EAS build"
+git push
 ```
 
 ### 2. Blueprint на Render
 
-1. [dashboard.render.com](https://dashboard.render.com/) → **New** → **Blueprint**
-2. Подключите GitHub-репозиторий `flight-alerts`
-3. Render создаст сервис `flight-alerts-api`
-4. При первом деплое введите секреты:
-   - `TRAVELPAYOUTS_TOKEN` — из профиля Travelpayouts
-   - `TRAVELPAYOUTS_MARKER` — партнёрский marker (можно пустым, если нет)
-5. `CRON_SECRET` Render сгенерирует сам — **скопируйте** из вкладки **Environment** (нужен для cron ниже)
+1. [dashboard.render.com](https://dashboard.render.com/) → ваш Blueprint → **Manual sync** (или создайте Blueprint заново)
+2. Render добавит базу **`flight-alerts-db`** и переменную **`DATABASE_URL`**
+3. Удалите старую **`DATABASE_PATH`** из Environment вручную, если осталась
+4. Секреты: `TRAVELPAYOUTS_TOKEN`, `TRAVELPAYOUTS_MARKER`, `CRON_SECRET`
 
-После деплоя URL будет вида `https://flight-alerts-api.onrender.com`. Проверка:
+Проверка:
 
 ```powershell
 curl.exe https://flight-alerts-api.onrender.com/health
 ```
 
-### 3. Cron бесплатно (cron-job.org)
+### 3. Cron (cron-job.org)
 
-На free tier Render **нет** встроенного cron. Настройте [cron-job.org](https://cron-job.org):
+| Задача | URL | Метод | Расписание |
+|--------|-----|-------|------------|
+| Проверка цен | `.../internal/check-prices?secret=CRON_SECRET` | **POST** | каждые 4 ч |
+| (опционально) Будить сервер | `.../health` | GET | каждые 10 мин |
 
-| Поле | Значение |
-|------|----------|
-| URL | `https://flight-alerts-api.onrender.com/internal/check-prices?secret=ВАШ_CRON_SECRET` |
-| Метод | **POST** |
-| Расписание | каждые 4 часа |
+### 4. Мобильное приложение → API
 
-Запрос будит «спящий» сервис и запускает проверку цен. Дополнительно можно раз в 10 мин дергать `GET /health`, чтобы сервис реже засыпал.
-
-### 4. Мобильное приложение → production
-
-В `mobile/app.json` замените `extra.apiUrl`:
+В `mobile/app.json` → `extra.apiUrl`:
 
 ```json
 "apiUrl": "https://flight-alerts-api.onrender.com"
 ```
 
-Перезапустите Expo (`npx.cmd expo start --lan`).
+---
 
-### 5. Free tier — что учесть
+## Сборка приложения на телефон (без ПК)
+
+Expo Go требует запущенный `expo start` на компьютере. Чтобы приложение работало **само**:
+
+```powershell
+cd mobile
+npx.cmd eas-cli login
+npm run build:android
+```
+
+1. EAS соберёт **APK** в облаке (~10–20 мин)
+2. Ссылку на скачивание покажет в терминале и на [expo.dev](https://expo.dev)
+3. Скачайте APK на Android и установите
+4. Разрешите уведомления при первом запуске
+
+Для iPhone нужен Apple Developer ($99/год):
+
+```powershell
+npm run build:ios
+```
+
+Профиль **`preview`** в `eas.json` — внутренняя установка (APK / TestFlight), не Store.
+
+### Free tier Render
 
 | Тема | Поведение |
 |------|-----------|
-| Сон сервиса | После ~15 мин без запросов API «засыпает»; первый запрос будит ~30–60 с |
-| SQLite | Данные живут между перезапусками, но **сбрасываются при redeploy** |
-| APScheduler | Работает, пока сервис не спит; основной триггер — cron-job.org |
-
-### Mobile Store
-
-- `eas build` для публикации в App Store / Google Play
+| Сон сервиса | ~15 мин без запросов; cron `/health` помогает |
+| Postgres free | ~30 дней, потом нужен upgrade или экспорт данных |
+| APScheduler | дублирует cron, пока сервис не спит |
 
 ## Ограничения API
 
