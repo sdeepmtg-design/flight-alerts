@@ -29,6 +29,7 @@ import { registerForPush } from "./src/notifications";
 
 type Tab = "routes" | "settings";
 type DateMode = "any" | "month" | "date";
+type TripClass = 0 | 1 | 2;
 
 function Chip({
   label,
@@ -87,6 +88,7 @@ export default function App() {
   const [day, setDay] = useState(15);
   const [flex3, setFlex3] = useState(false);
   const [oneWay, setOneWay] = useState(true);
+  const [tripClass, setTripClass] = useState<TripClass>(0);
 
   const months = useMemo(() => monthOptions(12), []);
   const days = useMemo(() => {
@@ -176,6 +178,7 @@ export default function App() {
         destination_country: country.name,
         destination_city: city.name,
         max_price: price,
+        trip_class: tripClass,
         departure_month,
         departure_date,
         date_flex_days,
@@ -355,6 +358,13 @@ export default function App() {
                   <Text style={styles.checkBox}>{!oneWay ? "☑" : "☐"}</Text>
                   <Text style={styles.checkLabel}>Нужен обратный билет</Text>
                 </Pressable>
+
+                <Text style={styles.hint}>Класс</Text>
+                <View style={styles.chipRow}>
+                  <Chip label="Эконом" active={tripClass === 0} onPress={() => setTripClass(0)} />
+                  <Chip label="Бизнес" active={tripClass === 1} onPress={() => setTripClass(1)} />
+                  <Chip label="Первый" active={tripClass === 2} onPress={() => setTripClass(2)} />
+                </View>
 
                 <TextInput
                   style={styles.input}

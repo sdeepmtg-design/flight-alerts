@@ -17,6 +17,7 @@ class RouteCreate(BaseModel):
     destination_city: str | None = Field(None, max_length=64)
     max_price: int = Field(..., gt=0, le=10_000_000)
     label: str | None = Field(None, max_length=64)
+    trip_class: int = Field(0, ge=0, le=2)
     departure_month: str | None = Field(None, pattern=r"^\d{4}-\d{2}$")
     departure_date: str | None = Field(None, pattern=r"^\d{4}-\d{2}-\d{2}$")
     date_flex_days: int = Field(0, ge=0, le=7)
@@ -44,6 +45,7 @@ class RouteOut(BaseModel):
     destination_city: str | None = None
     max_price: int
     label: str | None
+    trip_class: int = 0
     departure_month: str | None = None
     departure_date: str | None = None
     date_flex_days: int = 0

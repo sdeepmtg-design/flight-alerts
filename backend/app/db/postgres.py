@@ -27,6 +27,7 @@ SCHEMA_STATEMENTS = [
         created_at TEXT NOT NULL,
         destination_country TEXT,
         destination_city TEXT,
+        trip_class INTEGER DEFAULT 0,
         departure_month TEXT,
         departure_date TEXT,
         date_flex_days INTEGER DEFAULT 0,
@@ -205,6 +206,7 @@ async def add_route(
     *,
     destination_country: str | None = None,
     destination_city: str | None = None,
+    trip_class: int = 0,
     departure_month: str | None = None,
     departure_date: str | None = None,
     date_flex_days: int = 0,
@@ -232,13 +234,14 @@ async def add_route(
         if inactive:
             row = await conn.fetchrow(
                 "UPDATE routes SET active = TRUE, max_price = $1, label = $2, "
-                "destination_country = $3, destination_city = $4, departure_month = $5, "
-                "departure_date = $6, date_flex_days = $7, one_way = $8 "
-                "WHERE id = $9 RETURNING *",
+                "destination_country = $3, destination_city = $4, trip_class = $5, departure_month = $6, "
+                "departure_date = $7, date_flex_days = $8, one_way = $9 "
+                "WHERE id = $10 RETURNING *",
                 max_price,
                 label,
                 destination_country,
                 destination_city,
+                trip_class,
                 departure_month,
                 departure_date,
                 date_flex_days,
@@ -251,9 +254,9 @@ async def add_route(
             row = await conn.fetchrow(
                 "INSERT INTO routes ("
                 "device_id, destination_iata, max_price, label, created_at, "
-                "destination_country, destination_city, departure_month, departure_date, "
+                "destination_country, destination_city, trip_class, departure_month, departure_date, "
                 "date_flex_days, one_way"
-                ") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
+                ") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *",
                 device_id,
                 dest,
                 max_price,
@@ -261,6 +264,7 @@ async def add_route(
                 now,
                 destination_country,
                 destination_city,
+                trip_class,
                 departure_month,
                 departure_date,
                 date_flex_days,

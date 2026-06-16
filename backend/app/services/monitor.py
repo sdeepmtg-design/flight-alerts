@@ -36,6 +36,7 @@ async def run_price_check() -> tuple[int, int]:
             route["origin_iata"],
             route["destination_iata"],
             one_way=bool(route.get("one_way", 1)),
+            trip_class=int(route.get("trip_class") or 0),
             departure_month=route.get("departure_month"),
             departure_date=route.get("departure_date"),
             date_flex_days=int(route.get("date_flex_days") or 0),

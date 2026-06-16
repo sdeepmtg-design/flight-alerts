@@ -10,6 +10,7 @@ export type Route = {
   destination_city: string | null;
   max_price: number;
   label: string | null;
+  trip_class: number;
   departure_month: string | null;
   departure_date: string | null;
   date_flex_days: number;
@@ -26,6 +27,7 @@ export type RouteCreate = {
   destination_city?: string;
   max_price: number;
   label?: string;
+  trip_class?: number;
   departure_month?: string | null;
   departure_date?: string | null;
   date_flex_days?: number;

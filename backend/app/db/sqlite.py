@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS alerts_sent (
 ROUTE_MIGRATIONS = [
     "ALTER TABLE routes ADD COLUMN destination_country TEXT",
     "ALTER TABLE routes ADD COLUMN destination_city TEXT",
+    "ALTER TABLE routes ADD COLUMN trip_class INTEGER DEFAULT 0",
     "ALTER TABLE routes ADD COLUMN departure_month TEXT",
     "ALTER TABLE routes ADD COLUMN departure_date TEXT",
     "ALTER TABLE routes ADD COLUMN date_flex_days INTEGER DEFAULT 0",
@@ -176,6 +177,7 @@ async def add_route(
     *,
     destination_country: str | None = None,
     destination_city: str | None = None,
+    trip_class: int = 0,
     departure_month: str | None = None,
     departure_date: str | None = None,
     date_flex_days: int = 0,
@@ -202,13 +204,14 @@ async def add_route(
         if inactive:
             await db.execute(
                 "UPDATE routes SET active = 1, max_price = ?, label = ?, "
-                "destination_country = ?, destination_city = ?, departure_month = ?, "
+                "destination_country = ?, destination_city = ?, trip_class = ?, departure_month = ?, "
                 "departure_date = ?, date_flex_days = ?, one_way = ? WHERE id = ?",
                 (
                     max_price,
                     label,
                     destination_country,
                     destination_city,
+                    trip_class,
                     departure_month,
                     departure_date,
                     date_flex_days,
@@ -225,9 +228,9 @@ async def add_route(
             await db.execute(
                 "INSERT INTO routes ("
                 "device_id, destination_iata, max_price, label, created_at, "
-                "destination_country, destination_city, departure_month, departure_date, "
+                "destination_country, destination_city, trip_class, departure_month, departure_date, "
                 "date_flex_days, one_way"
-                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     device_id,
                     dest,
@@ -236,6 +239,7 @@ async def add_route(
                     now,
                     destination_country,
                     destination_city,
+                    trip_class,
                     departure_month,
                     departure_date,
                     date_flex_days,
