@@ -32,3 +32,13 @@ export function describeDateFilter(route: {
   }
   return "ближайшие 4 мес.";
 }
+
+const TRIP_CLASS_LABELS: Record<number, string> = {
+  0: "эконом",
+  1: "бизнес",
+  2: "первый",
+};
+
+export function describeTripClass(tripClass: number | null | undefined): string {
+  return TRIP_CLASS_LABELS[tripClass ?? 0] ?? "эконом";
+}

@@ -24,7 +24,7 @@ import {
   searchDepartureCities,
   searchDestinations,
 } from "./src/destinations";
-import { describeDateFilter, formatFlightDate } from "./src/format";
+import { describeDateFilter, describeTripClass, formatFlightDate } from "./src/format";
 import { registerForPush } from "./src/notifications";
 
 type Tab = "routes" | "settings";
@@ -365,6 +365,9 @@ export default function App() {
                   <Chip label="Бизнес" active={tripClass === 1} onPress={() => setTripClass(1)} />
                   <Chip label="Первый" active={tripClass === 2} onPress={() => setTripClass(2)} />
                 </View>
+                <Text style={styles.hintSmall}>
+                  Комфорт-класс в API Aviasales недоступен — только эконом, бизнес и первый.
+                </Text>
 
                 <TextInput
                   style={styles.input}
@@ -401,6 +404,7 @@ export default function App() {
                       <View style={styles.cardBody}>
                         <Text style={styles.cardTitle}>{title}</Text>
                         <Text style={styles.cardMeta}>
+                          {describeTripClass(item.trip_class)} ·{" "}
                           {item.one_way ? "в одну сторону" : "туда-обратно"} ·{" "}
                           {describeDateFilter(item)}
                         </Text>
@@ -456,6 +460,7 @@ const styles = StyleSheet.create({
   panel: { backgroundColor: "#1e293b", borderRadius: 12, padding: 12, marginBottom: 8 },
   section: { color: "#e2e8f0", fontWeight: "600", marginBottom: 6, marginTop: 4 },
   hint: { color: "#64748b", fontSize: 12, marginVertical: 6 },
+  hintSmall: { color: "#475569", fontSize: 11, marginBottom: 8, lineHeight: 15 },
   selectedLine: { color: "#38bdf8", fontSize: 13, marginTop: 6, marginBottom: 4 },
   searchResults: { maxHeight: 140, marginBottom: 4 },
   resultRow: {
