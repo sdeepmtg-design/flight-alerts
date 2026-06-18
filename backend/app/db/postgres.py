@@ -57,6 +57,16 @@ SCHEMA_STATEMENTS = [
     """,
 ]
 
+ROUTE_MIGRATIONS = [
+    "ALTER TABLE routes ADD COLUMN IF NOT EXISTS destination_country TEXT",
+    "ALTER TABLE routes ADD COLUMN IF NOT EXISTS destination_city TEXT",
+    "ALTER TABLE routes ADD COLUMN IF NOT EXISTS trip_class INTEGER DEFAULT 0",
+    "ALTER TABLE routes ADD COLUMN IF NOT EXISTS departure_month TEXT",
+    "ALTER TABLE routes ADD COLUMN IF NOT EXISTS departure_date TEXT",
+    "ALTER TABLE routes ADD COLUMN IF NOT EXISTS date_flex_days INTEGER DEFAULT 0",
+    "ALTER TABLE routes ADD COLUMN IF NOT EXISTS one_way BOOLEAN DEFAULT TRUE",
+]
+
 _pool: asyncpg.Pool | None = None
 
 
@@ -81,6 +91,8 @@ async def init_db() -> None:
     assert _pool is not None
     async with _pool.acquire() as conn:
         for sql in SCHEMA_STATEMENTS:
+            await conn.execute(sql)
+        for sql in ROUTE_MIGRATIONS:
             await conn.execute(sql)
         await _purge_inactive_routes(conn)
 
